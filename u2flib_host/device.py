@@ -102,7 +102,10 @@ class U2FDevice(object):
         apdu_data = struct.pack('B B B B B B B %is B B' % size,
                                 0, ins, p1, p2, l0, l1, l2, data, 0x00, 0x00)
         try:
-            resp = self._do_send_apdu(apdu_data)
+            while True:
+                resp = self._do_send_apdu(apdu_data)
+                if resp != "\x69\x85":
+                    break
         except Exception as e:
             # TODO Use six.reraise if/when Six becomes an agreed dependency.
             raise exc.DeviceError(e)

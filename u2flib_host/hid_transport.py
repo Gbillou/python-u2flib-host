@@ -50,6 +50,7 @@ DEVICES = [
     (0x1050, 0x0406),  # YubiKey 4 U2F+CCID
     (0x1050, 0x0407),  # YubiKey 4 OTP+U2F+CCID
     (0x2581, 0xf1d0),  # Plug-Up U2F Security Key
+    (0x2c97, 0x0001),  # Ledger Nano S
 ]
 HID_RPT_SIZE = 64
 
@@ -86,12 +87,14 @@ def list_devices(dev_class=None):
     return devices
 
 
-def _read_timeout(dev, size, timeout=2.0):
+def _read_timeout(dev, size, timeout=10.0):
     timeout += time()
     while time() < timeout:
         resp = dev.read(size)
         if resp:
             return resp
+        print("waiting for response.. {}".format(timeout-time()))
+        sleep(0.5)
     return []
 
 
